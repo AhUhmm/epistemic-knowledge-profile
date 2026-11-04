@@ -82,9 +82,6 @@ change your mind; and put it where others — people and agents — read it.
 - **The categories measure certainty and direction, not who a choice is
   good for, or at whose expense.** They are all written in the first
   person plural. The system doesn't say who is left out of that "we".
-- **Discipline has a cost.** On a real bundle of 84 files, the linter
-  found 47 errors and 64 warnings, and the computed index was sometimes
-  out of date.
 
 Try it on your projects and tell me where it doesn't hold. Issues are
 the right place, in English or in Italian.
