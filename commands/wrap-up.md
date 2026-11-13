@@ -67,11 +67,11 @@ answer. Items can be confirmed selectively.
 
 ## 4 — Regenerate views
 
-Rebuild `_index.md` from frontmatter (script-assisted where available):
-per-status listings, per-`area` groupings, computed back-references
-("derived by", "resolved by", "superseded by"). The index is a routing
-file — if step 3 changed anything, the index must be regenerated in the
-same wrap-up.
+Rebuild `_index.md` from frontmatter — run `scripts/ekp_index.py` where
+available; it computes the per-status listings, per-`area` groupings,
+back-references ("derived by", "resolved by", "superseded by") and the
+Mermaid graph deterministically. The index is a routing file — if step 3
+changed anything, the index must be regenerated in the same wrap-up.
 
 ## 5 — Append to the log
 
