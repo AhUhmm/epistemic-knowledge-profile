@@ -27,6 +27,10 @@ transport layer; EKP is the method layer that sits on top of it.
 
 ## 1. Motivation
 
+EKP exists to answer one question: **how do we maintain the conceptual
+evolution of a project — the decisions we take — and make it available
+to both humans and agents?**
+
 OKF is built for the data-catalog case: a concept is an asset (a table,
 a metric) and everything in a bundle reads as settled fact. Design and
 product reasoning is different — most of what it captures is provisional:
@@ -37,7 +41,10 @@ EKP adds exactly those, and nothing more, while staying OKF-conformant so
 that any OKF consumer (e.g. a static graph visualizer) can still read an
 EKP bundle without understanding the extensions.
 
-### The design question EKP answers
+### The structural design question
+
+Beneath the motivating question sits a structural one, and it is this
+one that shapes the profile:
 
 *How much frontmatter is necessary and how much is noise?*
 

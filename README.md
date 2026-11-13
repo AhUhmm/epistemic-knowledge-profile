@@ -23,11 +23,21 @@ that should reopen them.
 
 On two projects it left my head and became a shared working constraint.
 A colleague read one of my decisions, checked it against the code and
-contested it; the decision was rewritten. A reviewer agent with access
-only to constraints and decisions, not to the code, blocked an
+contested it; a new decision superseded it. The contested one was not
+deleted — it stays in the bundle as `superseded`, with the disagreement
+on record. That is deliberate: kept disagreements and superseded
+decisions strengthen the decisions that replaced them, because the new
+one carries the trace of what it had to answer. A reviewer agent with
+access only to constraints and decisions, not to the code, blocked an
 implementation that violated them. This repository is the system, as it
 stands, released together with the limits I know about. It accompanies
 the talk *Progettare ad alta voce* (WUDRome 2026).
+
+The talk leaves two questions open, and this repo inherits them: a
+system like this seems to offer affordances for contestation — it opens
+surfaces where decisions can be challenged. Does it, really? And how do
+those surfaces extend to the people the decisions fall on, who have no
+access to the bundle?
 
 ## Contents
 
@@ -37,7 +47,69 @@ the talk *Progettare ad alta voce* (WUDRome 2026).
 | [`templates/`](templates/) | One template per category, plus `SCHEMA_template.md`: the configuration block to paste into the project instruction file |
 | [`commands/`](commands/) | `/state` (load where the reasoning stands) and `/wrap-up` (lint, propose, write only after confirmation), written as Claude Code commands |
 | [`scripts/ekp_lint.py`](scripts/ekp_lint.py) | Deterministic linter for the checks a script can do. Read-only, Python 3 standard library only |
+| [`scripts/ekp_index.py`](scripts/ekp_index.py) | Regenerates the computed index from frontmatter: per-status listings, back-references, Mermaid graph. `--check` verifies staleness without writing |
+| [`scripts/ekp_usage.py`](scripts/ekp_usage.py) | Deterministic token accounting: appends one `usage` line per session to the log, from the session transcript. Runs as a Claude Code `SessionEnd` hook |
+| [`tests/`](tests/) | Contract tests for the scripts (`python3 -m unittest discover -s tests`): the example bundle must lint clean, a dirty fixture must trigger every finding class |
 | [`examples/neighbourhood-library/`](examples/neighbourhood-library/) | A small synthetic bundle at level L2: a library redesigns how its study rooms are booked |
+
+## The system at a glance
+
+Five layers, each with an owner and a write discipline (SPEC §8.1). The
+epistemic layer is the only co-owned one: the agent proposes, the human
+confirms — that confirmation step is **the gate**.
+
+```mermaid
+flowchart LR
+    subgraph H["owned by the human"]
+        SRC["sources/<br/>transcripts, briefs<br/><i>immutable</i>"]
+    end
+    subgraph C["co-owned — written only through the gate"]
+        EPI["epistemic layer<br/>concept/ + decisions/"]
+    end
+    subgraph A["maintained by the agent, computed by scripts"]
+        IDX["_index.md<br/><i>computed view</i>"]
+        LOG["log.md<br/><i>append-only events</i>"]
+    end
+    SCHEMA["schema<br/>ekp-config block in CLAUDE.md"]
+    SRC -- "evidence (read-only)" --> EPI
+    EPI -- "ekp_index.py" --> IDX
+    EPI -- "events, lint runs, usage" --> LOG
+    SCHEMA -. "declares perimeter,<br/>modules, areas" .-> EPI
+```
+
+The two operations route through those layers. Scripts do the
+bookkeeping (lint floor, views, token accounting); the model does the
+judgment; nothing durable is written without a yes:
+
+```mermaid
+sequenceDiagram
+    participant U as human
+    participant M as agent
+    participant B as bundle
+    Note over M,B: /state — query
+    M->>B: read _index.md + log tail (never file bodies)
+    M->>U: where the reasoning stands
+    Note over U,B: /wrap-up — lint + ingest
+    M->>B: ekp_lint.py — deterministic floor
+    M->>U: proposal: new items, transitions, edges
+    U->>M: confirm / reject / amend (the gate)
+    M->>B: write confirmed files
+    M->>B: ekp_index.py — regenerate views
+    M->>B: append events to log.md
+    Note over B: session end — ekp_usage.py hook<br/>appends one usage line, no model involved
+```
+
+Relationships are three typed edges, always stored on the downstream
+node; the upstream file holds no forward link, and the index computes
+the reverse reading (SPEC §5). The graph they form is whatever emerges —
+EKP encodes no pipeline and no canonical ordering:
+
+```mermaid
+flowchart LR
+    NEW["new node"] -- "derives_from" --> UP["the node it was built on"]
+    DEC["decision"] -- "resolves" --> GAP["gap"]
+    REPL["replacing node"] -- "supersedes" --> OLD["old node → status: superseded"]
+```
 
 ## Try it
 
@@ -48,9 +120,9 @@ python3 scripts/ekp_lint.py examples/neighbourhood-library
 # 2. in your project: create the two folders of the epistemic layer
 mkdir -p concept/{gaps,assumptions,opportunities,hypotheses,constraints,insights} decisions
 
-# 3. copy the linter, and the commands if you use Claude Code
+# 3. copy the scripts, and the commands if you use Claude Code
 mkdir -p scripts .claude/commands
-cp path/to/ekp/scripts/ekp_lint.py scripts/
+cp path/to/ekp/scripts/*.py scripts/
 cp path/to/ekp/commands/*.md .claude/commands/
 ```
 
@@ -61,6 +133,15 @@ one `type:` field per file, L1 adds `id` and `status`, L2 adds the links.
 
 The linter exits with 0 when the bundle is clean, 1 with warnings only,
 2 with errors. Add `--json` for machine-readable output.
+
+To also record what each session costs, add the usage hook to the
+project's `.claude/settings.json` — it appends one line per session to
+`log.md`, computed from the transcript, no model involved:
+
+```json
+{"hooks": {"SessionEnd": [{"hooks": [
+    {"type": "command", "command": "python3 scripts/ekp_usage.py"}]}]}}
+```
 
 ### Without the system
 
