@@ -60,7 +60,8 @@ answer. Items can be confirmed selectively.
    from the index, verified against the filesystem).
 2. Write files from `templates/` into the folder matching their `type`
    (`concept/<category>/`, flat `decisions/`). If `templates/` or the
-   category's template is missing, stop and say so — do not improvise
+   category's template (`templates/<PREFIX>_template.md`, e.g.
+   `GAP_template.md`) is missing, stop and say so — do not improvise
    the frontmatter.
 3. Edges: downstream only, path targets. Never add a forward link to an
    upstream file. Never delete an existing edge (append-only provenance).

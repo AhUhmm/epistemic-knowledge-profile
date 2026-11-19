@@ -63,7 +63,8 @@ the exact commit, as long as it was installed from a tag or from `main`.
 
 ## [0.2.0] - 2026-11-04
 
-First public release. Informed by a field audit of a real bundle
+First public release. Tagged retroactively: the tag points to the
+release commit, and this entry was written afterwards. Informed by a field audit of a real bundle
 (77 files, 200 edges) and by the LLM Wiki pattern (Karpathy, 2026).
 
 ### Breaking
