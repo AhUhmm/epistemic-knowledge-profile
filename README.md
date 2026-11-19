@@ -113,10 +113,10 @@ flowchart LR
 ## Try it
 
 ```bash
-# 1. look at the example and lint it
+# 1. in the EKP repo: look at the example and lint it
 python3 scripts/ekp_lint.py examples/neighbourhood-library
 
-# 2. in your project: create the two folders of the epistemic layer
+# 2. in your project, from here on: create the two folders of the epistemic layer
 mkdir -p concept/{gaps,assumptions,opportunities,hypotheses,constraints,insights} decisions
 
 # 3. copy the scripts and the templates, and the commands if you use Claude Code
@@ -124,15 +124,22 @@ mkdir -p scripts templates .claude/commands
 cp path/to/ekp/scripts/*.py scripts/
 cp path/to/ekp/templates/*.md templates/
 cp path/to/ekp/commands/*.md .claude/commands/
+
+# 4. create the log and the first (empty) index, which /state reads
+touch log.md
+python3 scripts/ekp_index.py .
 ```
 
 `/wrap-up` writes new items from `templates/`, so the folder has to be in
 the project, not only in this repo. Then paste the block in
 `templates/SCHEMA_template.md` into your project's instruction file
 (`CLAUDE.md`, `AGENTS.md` or equivalent), set its `ekp_version` to the
-output of `git -C path/to/ekp describe --tags`, and start from the
-templates. Bundles installed at different times drift apart silently;
-the recorded version says which [CHANGELOG](CHANGELOG.md) entries apply.
+output of `git -C path/to/ekp describe --tags --always`, and start from
+the templates. If your copy of EKP isn't a git clone (a ZIP download),
+write the release tag you downloaded instead. Install from a release tag
+or from `main`: a commit on another branch may later disappear.
+Bundles installed at different times drift apart silently; the recorded
+version says which [CHANGELOG](CHANGELOG.md) entries apply.
 
 You don't need the whole thing on day one: level L0 costs one `type:`
 field per file, L1 adds `id` and `status`, L2 adds the links.

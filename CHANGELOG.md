@@ -28,9 +28,9 @@ its entry. This file and the tags are the only places that carry the
 version: the specification, templates and scripts don't repeat it.
 
 A project records the version it was installed from with
-`git -C path/to/ekp describe --tags` (see the README). Between releases
-this prints something like `v0.2.0-9-gc5e1b23`, which still pins the
-exact commit.
+`git -C path/to/ekp describe --tags --always` (see the README). Between
+releases this prints something like `v0.2.0-9-g<hash>`, which still pins
+the exact commit, as long as it was installed from a tag or from `main`.
 
 ## [Unreleased]
 
