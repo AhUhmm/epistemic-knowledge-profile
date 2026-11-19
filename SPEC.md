@@ -337,8 +337,12 @@ The machine-readable part of the schema is a fenced YAML block
 was installed from (`ekp_version`, see CHANGELOG.md), the bundle perimeter, the
 active modules (§8.3), the `area` values in use (§4.3), the active
 domain extensions with the rule that branches on each (§7), and the
-locations of log and indexes. Commands and linters parse this block;
-everything else in the instruction file is prose for the agent.
+locations of log and indexes. Commands read the whole block as
+instructions; everything else in the instruction file is prose for the
+agent. The scripts currently read only `log` (`ekp_usage.py`): the
+linter and the index generator assume the default layout (`concept/`,
+`decisions/`, `log.md`, `decisions/_index.md`), so a bundle that changes
+those locations is not checked by them (see issue #19).
 
 The confirmation gate is a deliberate divergence from the wiki pattern
 (where the agent owns its layer entirely): epistemic commitments are
