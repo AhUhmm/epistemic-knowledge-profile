@@ -1,6 +1,6 @@
 # EKP — Epistemic Knowledge Profile
 
-**Version 0.2 — Draft**
+**Draft** — version and history in [CHANGELOG.md](CHANGELOG.md).
 **An epistemic profile of the Open Knowledge Format (OKF).**
 
 EKP is a *profile* of OKF: every EKP-conformant file is also a valid OKF
@@ -12,16 +12,6 @@ and the *reasoning trail* that produced it.
 Where OKF describes the **state** of assets for exchange, EKP describes
 the **process and certainty** of knowledge for reasoning. OKF is the
 transport layer; EKP is the method layer that sits on top of it.
-
-> **Changes from v0.1** — informed by a field audit of a real bundle
-> (77 files, 200 edges) and by the LLM Wiki pattern (Karpathy, 2026):
-> `type` is now the bare epistemic category and `area` carries domain
-> semantics (§3, §4.1); `decisions/` is flat — decision subtypes are
-> removed (§4.1); a seventh category `insight` is added (§4.1);
-> the edge vocabulary is fixed at three types with path targets, and
-> back-references are computed, never stored (§5); `semantic_tags` is
-> tolerated at every level, required only at L3 (§6); a new section
-> defines operations and layer contracts (§8).
 
 ---
 
@@ -563,6 +553,4 @@ domain OKF deliberately does not serve — without breaking OKF consumption.
 | **Falsifiability principle** | A field earns existence only if some rule branches on it | §2 |
 
 ---
-*EKP v0.2 — drafted 2026-07-23. Supersedes v0.1 (2026-06-18). A profile
-of OKF v0.1. v0.2 changes are grounded in a field audit of a live design
-bundle (77 files, 200 edges) and in the LLM Wiki pattern.*
+*A profile of OKF v0.1. Version and history: [CHANGELOG.md](CHANGELOG.md).*

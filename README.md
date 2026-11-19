@@ -49,6 +49,7 @@ access to the bundle?
 | [`scripts/ekp_usage.py`](scripts/ekp_usage.py) | Deterministic token accounting: appends one `usage` line per session to the log, from the session transcript. Runs as a Claude Code `SessionEnd` hook |
 | [`tests/`](tests/) | Contract tests for the scripts (`python3 -m unittest discover -s tests`): the example bundle must lint clean, a dirty fixture must trigger every finding class |
 | [`examples/neighbourhood-library/`](examples/neighbourhood-library/) | A small synthetic bundle at level L2: a library redesigns how its study rooms are booked |
+| [`CHANGELOG.md`](CHANGELOG.md) | Versions and what changed in each. One version number covers spec, templates, commands and scripts |
 
 ## The system at a glance
 
