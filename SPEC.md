@@ -1,6 +1,6 @@
 # EKP — Epistemic Knowledge Profile
 
-**Version 0.2 — Draft**
+**Draft** — version and history in [CHANGELOG.md](CHANGELOG.md).
 **An epistemic profile of the Open Knowledge Format (OKF).**
 
 EKP is a *profile* of OKF: every EKP-conformant file is also a valid OKF
@@ -12,16 +12,6 @@ and the *reasoning trail* that produced it.
 Where OKF describes the **state** of assets for exchange, EKP describes
 the **process and certainty** of knowledge for reasoning. OKF is the
 transport layer; EKP is the method layer that sits on top of it.
-
-> **Changes from v0.1** — informed by a field audit of a real bundle
-> (77 files, 200 edges) and by the LLM Wiki pattern (Karpathy, 2026):
-> `type` is now the bare epistemic category and `area` carries domain
-> semantics (§3, §4.1); `decisions/` is flat — decision subtypes are
-> removed (§4.1); a seventh category `insight` is added (§4.1);
-> the edge vocabulary is fixed at three types with path targets, and
-> back-references are computed, never stored (§5); `semantic_tags` is
-> tolerated at every level, required only at L3 (§6); a new section
-> defines operations and layer contracts (§8).
 
 ---
 
@@ -343,11 +333,23 @@ the operational discipline; it adapts the three-layer wiki pattern
 
 The machine-readable part of the schema is a fenced YAML block
 (`# ekp-config`) inside the project instruction file — see
-`templates/SCHEMA_template.md`. It declares the bundle perimeter, the
+`templates/SCHEMA_template.md`. It declares the EKP version the bundle
+was installed from (`ekp_version`, see CHANGELOG.md), the bundle perimeter, the
 active modules (§8.3), the `area` values in use (§4.3), the active
 domain extensions with the rule that branches on each (§7), and the
-locations of log and indexes. Commands and linters parse this block;
-everything else in the instruction file is prose for the agent.
+locations of log and indexes. Commands read the whole block as
+instructions; everything else in the instruction file is prose for the
+agent. The scripts currently read only `log` (`ekp_usage.py`): the
+linter and the index generator assume the default layout (`concept/`,
+`decisions/`, `log.md`, `decisions/_index.md`), so a bundle that changes
+those locations is not checked by them (see issue #19).
+
+`ekp_version` is recommended for any bundle installed from this
+repository, and is what upgrades branch on: when scripts, templates or
+commands are replaced with a newer release, every **Breaking** item in
+the CHANGELOG entries newer than `ekp_version` applies to the bundle and
+is migrated in the same change; then `ekp_version` is updated. Without
+it, which migrations apply cannot be determined.
 
 The confirmation gate is a deliberate divergence from the wiki pattern
 (where the agent owns its layer entirely): epistemic commitments are
@@ -551,7 +553,7 @@ domain OKF deliberately does not serve — without breaking OKF consumption.
 | **Index (`_index.md`)** | A computed routing view over the bundle: per-status listings, per-area groupings, back-references. Never a source of truth | §5.4 |
 | **Log (`log.md`)** | Append-only, grep-parseable record of epistemic events (creations, status transitions, lint runs) | §8.4 |
 | **Schema** | The project instruction file + templates: conventions, ownership contracts, and the machine-readable `ekp-config` block | §8.1 |
-| **`ekp-config`** | The fenced YAML block in the instruction file declaring perimeter, modules, areas, extensions, log/index locations | §8.1 |
+| **`ekp-config`** | The fenced YAML block in the instruction file declaring installed version, perimeter, modules, areas, extensions, log/index locations | §8.1 |
 | **Module** | Optional command behavior (continuity, integrations) activated only by declaration in `ekp-config` | §8.3 |
 | **Gate** | The confirmation step: the agent proposes, the human approves before any durable write to the epistemic layer | §8.1, §8.2 |
 | **Ingest / Query / Lint** | The three operations: gated writing of session knowledge; routed reading of state; health verification | §8.2 |
@@ -563,6 +565,4 @@ domain OKF deliberately does not serve — without breaking OKF consumption.
 | **Falsifiability principle** | A field earns existence only if some rule branches on it | §2 |
 
 ---
-*EKP v0.2 — drafted 2026-07-23. Supersedes v0.1 (2026-06-18). A profile
-of OKF v0.1. v0.2 changes are grounded in a field audit of a live design
-bundle (77 files, 200 edges) and in the LLM Wiki pattern.*
+*A profile of OKF v0.1. Version and history: [CHANGELOG.md](CHANGELOG.md).*

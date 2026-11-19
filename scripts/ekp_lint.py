@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ekp_lint.py — deterministic lint for an EKP bundle (EKP v0.2, SPEC §8.5).
+"""ekp_lint.py — deterministic lint for an EKP bundle (SPEC §8.5).
 
 Read-only. Checks the scripted floor per conformance level:
   L0: YAML parses; `type` present and in the epistemic vocabulary.
@@ -119,7 +119,7 @@ def lint(root):
         if not rel.startswith(folder + "/"):
             err("L1", rel, f"file not in folder matching category: expected under `{folder}/`")
         if t == "decision" and rel.count("/") > 1:
-            warn("L1", rel, "decisions/ should be flat (v0.2): file is in a subfolder")
+            warn("L1", rel, "decisions/ should be flat (SPEC §4.1): file is in a subfolder")
         status = first(fm, "status")
         if not status:
             err("L1", rel, "missing `status`")
@@ -128,7 +128,7 @@ def lint(root):
             err("L1", rel, f"`status: {status}` not in {t} lifecycle {lifecycle} (nor universal `superseded`)")
         for lf in LEGACY_EDGE_FIELDS:
             if fm.get(lf):
-                warn("L2", rel, f"legacy edge field `{lf}` present (v0.2 vocabulary: {EDGE_FIELDS})")
+                warn("L2", rel, f"legacy edge field `{lf}` present (SPEC §5 vocabulary: {EDGE_FIELDS})")
 
     # --- Edge checks (L2): vocabulary, path targets, single direction ---
     edge_pairs = set()

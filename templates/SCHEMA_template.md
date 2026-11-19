@@ -3,11 +3,19 @@
 <!-- Paste this section into the project instruction file (CLAUDE.md or
 equivalent). It is the bundle schema (SPEC §8.1): the single place where
 the bundle declares its perimeter, active modules, area vocabulary, and
-domain extensions. Commands and the linter read the fenced YAML block
-below — keep it as the first ```yaml block after this heading. -->
+domain extensions. Commands read the fenced YAML block below — keep it
+as the first ```yaml block after this heading. The scripts read only
+`log`; the linter and the index generator assume the default perimeter,
+log and index locations, so change those only if you don't rely on the
+scripts (SPEC §8.1). -->
 
 ```yaml
 # ekp-config
+ekp_version: vX.Y.Z    # the EKP version this bundle was installed from:
+                       # `git -C path/to/ekp describe --tags --always`,
+                       # or the release tag of a ZIP download (CHANGELOG.md).
+                       # Update it when you upgrade scripts, templates, commands.
+
 perimeter:
   - concept/
   - decisions/

@@ -9,8 +9,6 @@ every EKP file is also a valid OKF document. It adds what OKF leaves out on
 purpose — epistemic status, a lifecycle, typed links between items, and
 review triggers.
 
-[Italiano più sotto](#in-italiano).
-
 ## Why it exists
 
 I started it as a personal tool. Working with agents, I was taking many
@@ -51,6 +49,7 @@ access to the bundle?
 | [`scripts/ekp_usage.py`](scripts/ekp_usage.py) | Deterministic token accounting: appends one `usage` line per session to the log, from the session transcript. Runs as a Claude Code `SessionEnd` hook |
 | [`tests/`](tests/) | Contract tests for the scripts (`python3 -m unittest discover -s tests`): the example bundle must lint clean, a dirty fixture must trigger every finding class |
 | [`examples/neighbourhood-library/`](examples/neighbourhood-library/) | A small synthetic bundle at level L2: a library redesigns how its study rooms are booked |
+| [`CHANGELOG.md`](CHANGELOG.md) | Versions and what changed in each. One version number covers spec, templates, commands and scripts |
 
 ## The system at a glance
 
@@ -114,22 +113,36 @@ flowchart LR
 ## Try it
 
 ```bash
-# 1. look at the example and lint it
+# 1. in the EKP repo: look at the example and lint it
 python3 scripts/ekp_lint.py examples/neighbourhood-library
 
-# 2. in your project: create the two folders of the epistemic layer
+# 2. in your project, from here on: create the two folders of the epistemic layer
 mkdir -p concept/{gaps,assumptions,opportunities,hypotheses,constraints,insights} decisions
 
-# 3. copy the scripts, and the commands if you use Claude Code
-mkdir -p scripts .claude/commands
+# 3. copy the scripts and the templates, and the commands if you use Claude Code
+mkdir -p scripts templates .claude/commands
 cp path/to/ekp/scripts/*.py scripts/
+cp path/to/ekp/templates/*.md templates/
 cp path/to/ekp/commands/*.md .claude/commands/
+
+# 4. create the log and the first (empty) index, which /state reads
+touch log.md
+python3 scripts/ekp_index.py .
 ```
 
-Then paste the block in `templates/SCHEMA_template.md` into your project's
-instruction file (`CLAUDE.md`, `AGENTS.md` or equivalent) and start from
-the templates. You don't need the whole thing on day one: level L0 costs
-one `type:` field per file, L1 adds `id` and `status`, L2 adds the links.
+`/wrap-up` writes new items from `templates/`, so the folder has to be in
+the project, not only in this repo. Then paste the block in
+`templates/SCHEMA_template.md` into your project's instruction file
+(`CLAUDE.md`, `AGENTS.md` or equivalent), set its `ekp_version` to the
+output of `git -C path/to/ekp describe --tags --always`, and start from
+the templates. If your copy of EKP isn't a git clone (a ZIP download),
+write the release tag you downloaded instead. Install from a release tag
+or from `main`: a commit on another branch may later disappear.
+Bundles installed at different times drift apart silently; the recorded
+version says which [CHANGELOG](CHANGELOG.md) entries apply.
+
+You don't need the whole thing on day one: level L0 costs one `type:`
+field per file, L1 adds `id` and `status`, L2 adds the links.
 
 The linter exits with 0 when the bundle is clean, 1 with warnings only,
 2 with errors. Add `--json` for machine-readable output.
@@ -172,33 +185,3 @@ the right place, in English or in Italian.
 Text — the specification, templates, commands, documentation and
 example — is released under [CC BY 4.0](LICENSE). Code in `scripts/` is
 released under the [MIT licence](LICENSE-CODE).
-
----
-
-## In italiano
-
-EKP è un modo per scrivere non solo che cosa ha deciso un progetto, ma
-quanto ne è sicuro, che cosa sta assumendo e che cosa gli farebbe
-cambiare idea. Sono file markdown che leggono sia le persone sia gli
-agenti. Accompagna il talk *Progettare ad alta voce* (WUDRome 2026).
-
-La specifica, i template e l'esempio sono in inglese. Le categorie sono
-sette: gap, assunzioni, insight, opportunità, ipotesi, constraint e
-decisioni. Ognuna ha un ciclo di vita, e le relazioni tra elementi
-sono di tre tipi: *deriva da*, *sostituisce*, *risolve*.
-
-Per cominciare:
-
-1. Guardate l'esempio in `examples/neighbourhood-library/` e lanciate il
-   linter: `python3 scripts/ekp_lint.py examples/neighbourhood-library`.
-2. Nel vostro progetto, create le cartelle `concept/` e `decisions/`,
-   incollate il blocco di `templates/SCHEMA_template.md` nel file di
-   istruzioni (`CLAUDE.md` o equivalente) e partite dai template.
-3. Non serve tutto subito. Il livello L0 chiede solo il campo `type`;
-   L1 aggiunge `id` e `status`; L2 i collegamenti.
-
-I limiti che conosco sono elencati sopra, in *Known limits*. Il primo,
-chi ha proposto cosa, è già la [issue #1](../../issues/1).
-
-Provatelo sui vostri progetti e ditemi dove non regge. Le issue vanno
-bene anche in italiano.
