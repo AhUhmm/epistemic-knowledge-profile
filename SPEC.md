@@ -1,6 +1,7 @@
 # EKP — Epistemic Knowledge Profile
 
-**Draft** — version and history in [CHANGELOG.md](CHANGELOG.md).
+**Pre-1.0: the format may still change.** Version and history in
+[CHANGELOG.md](CHANGELOG.md).
 **An epistemic profile of the Open Knowledge Format (OKF).**
 
 EKP is a *profile* of OKF: every EKP-conformant file is also a valid OKF

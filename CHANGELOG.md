@@ -34,6 +34,8 @@ the exact commit, as long as it was installed from a tag or from `main`.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-19
+
 ### Added
 - `scripts/ekp_index.py`: the computed index is built from frontmatter
   deterministically (per-status listings, per-area groupings,
@@ -49,14 +51,23 @@ the exact commit, as long as it was installed from a tag or from `main`.
   glance" diagrams.
 - This changelog, and a single versioning scheme.
 - `ekp_version` in the `ekp-config` block: the EKP version a bundle was
-  installed from (#17).
+  installed from (#17). SPEC §8.1 states the upgrade rule that uses it.
 
 ### Changed
 - Install steps copy `templates/`, which `/wrap-up` needs (#17).
 - `/wrap-up` stops when a template is missing instead of improvising
   the frontmatter (#17).
+- Install step 4 creates `log.md` and the first index, which `/state`
+  reads on the first session. The version is captured with
+  `describe --tags --always`, with a fallback for ZIP downloads.
+- SPEC §8.1 and the schema template say what actually reads
+  `ekp-config`: the scripts read only `log` so far (see #19).
 - Version numbers removed from SPEC and scripts. Lint messages cite
   SPEC sections instead.
+
+### Fixed
+- The linter header names the bundle when run on `.`.
+- SPEC §8.5 lists every check the linter runs.
 
 ### Removed
 - The Italian section of the README.
@@ -64,8 +75,8 @@ the exact commit, as long as it was installed from a tag or from `main`.
 ## [0.2.0] - 2026-11-04
 
 First public release. Tagged retroactively: the tag points to the
-release commit, and this entry was written afterwards. Informed by a field audit of a real bundle
-(77 files, 200 edges) and by the LLM Wiki pattern (Karpathy, 2026).
+release commit, and this entry was written afterwards. Informed by a
+field audit of a real bundle (77 files, 200 edges) and by the LLM Wiki pattern (Karpathy, 2026).
 
 ### Breaking
 - `type` is now the bare epistemic category. `area` carries domain
@@ -88,5 +99,6 @@ release commit, and this entry was written afterwards. Informed by a field audit
 
 Initial draft of the specification. Not published in this repository.
 
-[Unreleased]: ../../compare/v0.2.0...HEAD
-[0.2.0]: ../../releases/tag/v0.2.0
+[Unreleased]: https://github.com/AhUhmm/epistemic-knowledge-profile/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/AhUhmm/epistemic-knowledge-profile/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/AhUhmm/epistemic-knowledge-profile/releases/tag/v0.2.0
