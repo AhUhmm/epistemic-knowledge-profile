@@ -129,8 +129,13 @@ cp path/to/ekp/commands/*.md .claude/commands/
 `/wrap-up` writes new items from `templates/`, so the folder has to be in
 the project, not only in this repo. Then paste the block in
 `templates/SCHEMA_template.md` into your project's instruction file
-(`CLAUDE.md`, `AGENTS.md` or equivalent) and start from the templates. You don't need the whole thing on day one: level L0 costs
-one `type:` field per file, L1 adds `id` and `status`, L2 adds the links.
+(`CLAUDE.md`, `AGENTS.md` or equivalent), set its `ekp_version` to the
+output of `git -C path/to/ekp describe --tags`, and start from the
+templates. Bundles installed at different times drift apart silently;
+the recorded version says which [CHANGELOG](CHANGELOG.md) entries apply.
+
+You don't need the whole thing on day one: level L0 costs one `type:`
+field per file, L1 adds `id` and `status`, L2 adds the links.
 
 The linter exits with 0 when the bundle is clean, 1 with warnings only,
 2 with errors. Add `--json` for machine-readable output.

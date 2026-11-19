@@ -8,6 +8,10 @@ below — keep it as the first ```yaml block after this heading. -->
 
 ```yaml
 # ekp-config
+ekp_version: vX.Y.Z    # the EKP version this bundle was installed from:
+                       # `git -C path/to/ekp describe --tags` (CHANGELOG.md).
+                       # Update it when you upgrade scripts, templates, commands.
+
 perimeter:
   - concept/
   - decisions/

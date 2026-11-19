@@ -48,6 +48,8 @@ exact commit.
 - SPEC §1 opens with the founding question. README: "system at a
   glance" diagrams.
 - This changelog, and a single versioning scheme.
+- `ekp_version` in the `ekp-config` block: the EKP version a bundle was
+  installed from (#17).
 
 ### Changed
 - Install steps copy `templates/`, which `/wrap-up` needs (#17).

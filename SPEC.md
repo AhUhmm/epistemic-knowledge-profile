@@ -333,7 +333,8 @@ the operational discipline; it adapts the three-layer wiki pattern
 
 The machine-readable part of the schema is a fenced YAML block
 (`# ekp-config`) inside the project instruction file — see
-`templates/SCHEMA_template.md`. It declares the bundle perimeter, the
+`templates/SCHEMA_template.md`. It declares the EKP version the bundle
+was installed from (`ekp_version`, see CHANGELOG.md), the bundle perimeter, the
 active modules (§8.3), the `area` values in use (§4.3), the active
 domain extensions with the rule that branches on each (§7), and the
 locations of log and indexes. Commands and linters parse this block;
@@ -541,7 +542,7 @@ domain OKF deliberately does not serve — without breaking OKF consumption.
 | **Index (`_index.md`)** | A computed routing view over the bundle: per-status listings, per-area groupings, back-references. Never a source of truth | §5.4 |
 | **Log (`log.md`)** | Append-only, grep-parseable record of epistemic events (creations, status transitions, lint runs) | §8.4 |
 | **Schema** | The project instruction file + templates: conventions, ownership contracts, and the machine-readable `ekp-config` block | §8.1 |
-| **`ekp-config`** | The fenced YAML block in the instruction file declaring perimeter, modules, areas, extensions, log/index locations | §8.1 |
+| **`ekp-config`** | The fenced YAML block in the instruction file declaring installed version, perimeter, modules, areas, extensions, log/index locations | §8.1 |
 | **Module** | Optional command behavior (continuity, integrations) activated only by declaration in `ekp-config` | §8.3 |
 | **Gate** | The confirmation step: the agent proposes, the human approves before any durable write to the epistemic layer | §8.1, §8.2 |
 | **Ingest / Query / Lint** | The three operations: gated writing of session knowledge; routed reading of state; health verification | §8.2 |
