@@ -40,9 +40,10 @@ the exact commit, as long as it was installed from a tag or from `main`.
 - `scripts/ekp_index.py`: the computed index is built from frontmatter
   deterministically (per-status listings, per-area groupings,
   back-references, Mermaid graph). `--check` reports a stale index.
-- `scripts/ekp_usage.py`: a SessionEnd hook that appends one usage line
-  per session to the bundle log, computed from the Claude Code
-  transcript (#8).
+- `scripts/ekp_usage.py`: a SessionEnd hook that appends a usage line to
+  the bundle log, computed from the Claude Code transcript (#8). Repeats
+  with unchanged totals are skipped; a resumed session appends its
+  updated totals, and the latest line wins.
 - Linter: `resolves` on a non-decision or settling a non-gap, index
   statuses compared against frontmatter, log cross-checks (#9).
 - `tests/`: contract tests for lint, index and usage, with a clean
@@ -67,7 +68,13 @@ the exact commit, as long as it was installed from a tag or from `main`.
 
 ### Fixed
 - The linter header names the bundle when run on `.`.
-- SPEC §8.5 lists every check the linter runs.
+- Quoted frontmatter values are unquoted before checking.
+- IDs and bare-ID references accept three or more digits (`DEC-1000`),
+  not exactly three.
+- `--json` reports the same `files` count as the text output: every file
+  in the perimeter, including those whose frontmatter can't be read.
+- SPEC §8.5 lists the checks the linter runs, and says precisely what
+  each one covers.
 
 ### Removed
 - The Italian section of the README.
