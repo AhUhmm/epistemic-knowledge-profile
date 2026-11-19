@@ -19,6 +19,10 @@ What to look at:
 5. **Views and log.** `decisions/_index.md` computes the back-references;
    `log.md` records every status transition.
 
+The bundle's `CLAUDE.md` has no `ekp_version`: the example lives inside
+the EKP repository and is versioned with it. A bundle installed in a
+project declares it (see `templates/SCHEMA_template.md`).
+
 Run the linter from the repository root:
 
 ```bash
