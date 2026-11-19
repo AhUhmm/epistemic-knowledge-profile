@@ -9,8 +9,6 @@ every EKP file is also a valid OKF document. It adds what OKF leaves out on
 purpose — epistemic status, a lifecycle, typed links between items, and
 review triggers.
 
-[Italiano più sotto](#in-italiano).
-
 ## Why it exists
 
 I started it as a personal tool. Working with agents, I was taking many
@@ -172,33 +170,3 @@ the right place, in English or in Italian.
 Text — the specification, templates, commands, documentation and
 example — is released under [CC BY 4.0](LICENSE). Code in `scripts/` is
 released under the [MIT licence](LICENSE-CODE).
-
----
-
-## In italiano
-
-EKP è un modo per scrivere non solo che cosa ha deciso un progetto, ma
-quanto ne è sicuro, che cosa sta assumendo e che cosa gli farebbe
-cambiare idea. Sono file markdown che leggono sia le persone sia gli
-agenti. Accompagna il talk *Progettare ad alta voce* (WUDRome 2026).
-
-La specifica, i template e l'esempio sono in inglese. Le categorie sono
-sette: gap, assunzioni, insight, opportunità, ipotesi, constraint e
-decisioni. Ognuna ha un ciclo di vita, e le relazioni tra elementi
-sono di tre tipi: *deriva da*, *sostituisce*, *risolve*.
-
-Per cominciare:
-
-1. Guardate l'esempio in `examples/neighbourhood-library/` e lanciate il
-   linter: `python3 scripts/ekp_lint.py examples/neighbourhood-library`.
-2. Nel vostro progetto, create le cartelle `concept/` e `decisions/`,
-   incollate il blocco di `templates/SCHEMA_template.md` nel file di
-   istruzioni (`CLAUDE.md` o equivalente) e partite dai template.
-3. Non serve tutto subito. Il livello L0 chiede solo il campo `type`;
-   L1 aggiunge `id` e `status`; L2 i collegamenti.
-
-I limiti che conosco sono elencati sopra, in *Known limits*. Il primo,
-chi ha proposto cosa, è già la [issue #1](../../issues/1).
-
-Provatelo sui vostri progetti e ditemi dove non regge. Le issue vanno
-bene anche in italiano.
