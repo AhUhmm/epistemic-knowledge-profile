@@ -420,9 +420,12 @@ The scripted floor, per level:
   `status` valid for the category's lifecycle (§4.2).
 - **L2** — edge targets exist (dangling → warning); no forward links
   stored upstream; no edge stored in both directions; edge targets are
-  paths, not bare IDs.
-- **Views** — index entries agree with file frontmatter (stale index →
-  warning).
+  paths, not bare IDs; legacy edge fields flagged; `resolves` stored on a
+  non-decision (error) or settling a non-gap (warning, §5.2).
+- **Views** — every id appears in the index, and index statuses agree
+  with file frontmatter (stale index → warning).
+- **Log** — every `create` event has a file, and each file's status
+  matches its last logged transition (§8.4; disagreement → warning).
 
 Everything else — duplicate concepts, misclassified edges, stale claims —
 is judgment-lint, proposed by the agent and confirmed through the gate.
