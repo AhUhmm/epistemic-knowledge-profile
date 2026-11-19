@@ -207,7 +207,7 @@ def main():
     if "--json" in sys.argv:
         print(json.dumps({"files": n_files, "errors": errors, "warnings": warnings}, indent=1))
     else:
-        print(f"# ekp_lint — {root.name}")
+        print(f"# ekp_lint — {root.resolve().name}")
         print(f"Files in perimeter: {n_files} | Errors: {len(errors)} | Warnings: {len(warnings)}\n")
         for sev, level, path, msg in findings:
             print(f"- [{sev}/{level}] {path}: {msg}")

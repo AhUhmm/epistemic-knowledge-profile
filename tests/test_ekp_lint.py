@@ -99,5 +99,15 @@ class DirtyBundle(unittest.TestCase):
         self.assertEqual((len(errors), len(warnings)), (10, 17))
 
 
+
+class Cli(unittest.TestCase):
+    def test_header_names_the_bundle_when_root_is_dot(self):
+        import subprocess
+        bundle = ROOT / "examples" / "neighbourhood-library"
+        out = subprocess.run([sys.executable, str(ROOT / "scripts" / "ekp_lint.py"), "."],
+                             cwd=bundle, capture_output=True, text=True).stdout
+        self.assertEqual(out.splitlines()[0], "# ekp_lint — neighbourhood-library")
+
+
 if __name__ == "__main__":
     unittest.main()

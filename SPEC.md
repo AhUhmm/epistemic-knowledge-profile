@@ -1,6 +1,7 @@
 # EKP — Epistemic Knowledge Profile
 
-**Draft** — version and history in [CHANGELOG.md](CHANGELOG.md).
+**Pre-1.0: the format may still change.** Version and history in
+[CHANGELOG.md](CHANGELOG.md).
 **An epistemic profile of the Open Knowledge Format (OKF).**
 
 EKP is a *profile* of OKF: every EKP-conformant file is also a valid OKF
@@ -415,14 +416,27 @@ None duplicates another.
 
 The scripted floor, per level:
 
-- **L0** — YAML parses; `type` present and in vocabulary (§4.1).
-- **L1** — `id` present, well-formed, unique; folder matches category;
-  `status` valid for the category's lifecycle (§4.2).
-- **L2** — edge targets exist (dangling → warning); no forward links
-  stored upstream; no edge stored in both directions; edge targets are
-  paths, not bare IDs.
-- **Views** — index entries agree with file frontmatter (stale index →
-  warning).
+- **L0** — a frontmatter block is present and its fields can be read;
+  `type` present and in vocabulary (§4.1). The scripts read the subset
+  of YAML that EKP frontmatter uses (scalars, inline and dash lists) and
+  do not validate full YAML syntax.
+- **L1** — `id` present, well-formed (`PREFIX-NNN`, three or more
+  digits), unique, and its prefix matches the `type`; folder matches
+  category; `decisions/` flat (subfolder → warning); `status` valid for
+  the category's lifecycle (§4.2).
+- **L2** — edge targets exist (dangling → warning); edge targets are
+  paths, not bare IDs (warning); no edge stored in both directions;
+  upstream-pointing fields from earlier vocabularies (`resolved_by`,
+  `superseded_by`, …) flagged; `resolves` stored on a non-decision
+  (error) or settling a non-gap (warning, §5.2). Whether an edge points
+  the right way semantically is judgment-lint.
+- **Views** — when `decisions/_index.md` exists: every decision id
+  appears in it, and concept ids too if it has a concept section (a
+  decisions-only index is legitimate, §5.4); statuses in its table rows
+  agree with file frontmatter (stale index → warning). A missing index
+  is not reported.
+- **Log** — every `create` event has a file, and each file's status
+  matches its last logged transition (§8.4; disagreement → warning).
 
 Everything else — duplicate concepts, misclassified edges, stale claims —
 is judgment-lint, proposed by the agent and confirmed through the gate.
