@@ -118,15 +118,17 @@ python3 scripts/ekp_lint.py examples/neighbourhood-library
 # 2. in your project: create the two folders of the epistemic layer
 mkdir -p concept/{gaps,assumptions,opportunities,hypotheses,constraints,insights} decisions
 
-# 3. copy the scripts, and the commands if you use Claude Code
-mkdir -p scripts .claude/commands
+# 3. copy the scripts and the templates, and the commands if you use Claude Code
+mkdir -p scripts templates .claude/commands
 cp path/to/ekp/scripts/*.py scripts/
+cp path/to/ekp/templates/*.md templates/
 cp path/to/ekp/commands/*.md .claude/commands/
 ```
 
-Then paste the block in `templates/SCHEMA_template.md` into your project's
-instruction file (`CLAUDE.md`, `AGENTS.md` or equivalent) and start from
-the templates. You don't need the whole thing on day one: level L0 costs
+`/wrap-up` writes new items from `templates/`, so the folder has to be in
+the project, not only in this repo. Then paste the block in
+`templates/SCHEMA_template.md` into your project's instruction file
+(`CLAUDE.md`, `AGENTS.md` or equivalent) and start from the templates. You don't need the whole thing on day one: level L0 costs
 one `type:` field per file, L1 adds `id` and `status`, L2 adds the links.
 
 The linter exits with 0 when the bundle is clean, 1 with warnings only,
