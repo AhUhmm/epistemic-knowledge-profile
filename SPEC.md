@@ -347,10 +347,13 @@ those locations is not checked by them (see issue #19).
 
 `ekp_version` is recommended for any bundle installed from this
 repository, and is what upgrades branch on: when scripts, templates or
-commands are replaced with a newer release, every **Breaking** item in
-the CHANGELOG entries newer than `ekp_version` applies to the bundle and
-is migrated in the same change; then `ekp_version` is updated. Without
-it, which migrations apply cannot be determined.
+commands are replaced with a newer release, every **Breaking** item and
+every **Upgrade notes** item in the CHANGELOG entries newer than
+`ekp_version` applies to the bundle and is carried out in the same
+change; then `ekp_version` is updated. Breaking items are migrations
+(the bundle no longer conforms without them); upgrade notes are other
+actions an upgrade needs, such as regenerating a view. Without
+`ekp_version`, which of them apply cannot be determined.
 
 The confirmation gate is a deliberate divergence from the wiki pattern
 (where the agent owns its layer entirely): epistemic commitments are

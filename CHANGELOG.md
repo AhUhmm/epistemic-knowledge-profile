@@ -23,6 +23,11 @@ version of a **format**:
 Until 1.0, the format is still settling: a breaking change bumps MINOR
 and is listed under **Breaking** in its entry.
 
+An action an upgrade needs that isn't a breaking change (for example,
+regenerating the index once) is listed under **Upgrade notes**. On
+upgrade, a bundle applies every Breaking item and every upgrade note in
+the entries newer than its `ekp_version` (SPEC §8.1).
+
 Each release is an annotated git tag `vX.Y.Z` on the commit that closes
 its entry. This file and the tags are the only places that carry the
 version: the specification, templates and scripts don't repeat it.
@@ -39,7 +44,14 @@ the exact commit, as long as it was installed from a tag or from `main`.
 Installation fixes from the first real install of 0.3.0 (#22, step 1),
 and documentation. No change to the format.
 
+### Upgrade notes
+- Regenerate the index once: `python3 scripts/ekp_index.py .`. Its title
+  line changes, so `--check` reports it stale until you do.
+
 ### Added
+- An **Upgrade notes** section in changelog entries, for actions an
+  upgrade needs that aren't breaking. SPEC §8.1's upgrade rule now covers
+  them alongside Breaking items.
 - `docs/how-it-works.md`: EKP explained for non-technical readers, with
   diagrams of the project layout, the links between notes (on the
   example bundle), a working session, and who checks what.
@@ -61,8 +73,6 @@ and documentation. No change to the format.
 - `ekp_index.py` no longer leaves `scripts/__pycache__/` in the project.
 - The index title no longer contains the bundle folder's name, so a
   clone in a differently named folder no longer fails `--check`.
-  **After upgrading, regenerate the index once** (`python3
-  scripts/ekp_index.py .`): its title line changes.
 
 ## [0.3.0] - 2026-11-19
 
