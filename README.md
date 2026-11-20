@@ -57,27 +57,31 @@ access to the bundle?
 New to EKP, or not technical? Start from [How EKP works](docs/how-it-works.md):
 the same system explained step by step, with an example.
 
-Five layers, each with an owner and a write discipline (SPEC §8.1). The
-epistemic layer is the only co-owned one: the agent proposes, the human
-confirms — that confirmation step is **the gate**. The gate is a working
-agreement written into the commands, not a technical lock.
+Five layers, each with an owner and a write discipline (SPEC §8.1),
+plus an event log (§8.4). The epistemic layer is the only one written
+through **the gate**: the agent proposes, the human confirms. The gate is
+a working agreement written into the commands, not a technical lock.
 
 ```mermaid
 flowchart LR
-    subgraph H["owned by the human"]
-        SRC["sources/<br/>transcripts, briefs<br/><i>immutable</i>"]
+    subgraph H["human — immutable"]
+        SRC["sources/<br/>transcripts, briefs"]
+    end
+    subgraph D["human + agent — free structure"]
+        DOM["domain documents<br/>research, specs, deliverables"]
     end
     subgraph C["co-owned — written only through the gate"]
         EPI["epistemic layer<br/>concept/ + decisions/"]
     end
-    subgraph A["updated by the agent at wrap-up, using the scripts"]
+    subgraph V["agent — regenerated, never hand-edited"]
         IDX["_index.md<br/><i>computed view</i>"]
-        LOG["log.md<br/><i>append-only events</i>"]
     end
     SCHEMA["schema — co-evolved<br/>ekp-config block + templates"]
+    LOG["log.md<br/><i>append-only events</i>"]
     SRC -- "evidence (read-only)" --> EPI
-    EPI -- "ekp_index.py" --> IDX
-    EPI -- "events, lint runs, usage" --> LOG
+    DOM -- "cited in bodies<br/>or via resource" --> EPI
+    EPI -- "agent runs ekp_index.py<br/>at wrap-up" --> IDX
+    EPI -- "agent appends events<br/>at wrap-up" --> LOG
     SCHEMA -. "declares perimeter, modules,<br/>areas (read by the commands)" .-> EPI
 ```
 
@@ -93,7 +97,7 @@ sequenceDiagram
     participant M as agent
     participant B as bundle
     Note over M,B: /state — query
-    M->>B: read _index.md + log tail (never file bodies)
+    M->>B: read _index.md + log tail first, open files only as needed
     M->>U: where the reasoning stands
     Note over U,B: /wrap-up — lint + ingest
     M->>B: runs ekp_lint.py — deterministic checks
@@ -102,7 +106,7 @@ sequenceDiagram
     M->>B: write confirmed files
     M->>B: runs ekp_index.py — regenerate views
     M->>B: append events to log.md
-    Note over B: session end — optional Claude Code hook:<br/>ekp_usage.py appends token counts, no model involved
+    Note over B: session end — optional Claude Code hook:<br/>ekp_usage.py appends token counts to the log,<br/>no model involved
 ```
 
 Relationships are three typed edges, always stored on the downstream
