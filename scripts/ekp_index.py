@@ -85,8 +85,9 @@ def build_index(root, files):
     for src, field, tgt in edges:
         backrefs.setdefault(tgt, {}).setdefault(BACKREF_VERB[field], []).append(src)
 
-    name = root.resolve().name.replace("-", " ")
-    out = [f"# Index — {name} (computed view)", "",
+    # The title must not depend on where the bundle sits on disk: a clone
+    # in a differently named folder would otherwise look stale.
+    out = ["# Index (computed view)", "",
            "<!-- Regenerated at wrap-up from frontmatter (scripts/ekp_index.py).",
            "Never edit by hand: if this file and a source file disagree, the",
            "source file wins (SPEC §5.4). -->", ""]

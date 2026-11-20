@@ -1,4 +1,4 @@
-# Index — neighbourhood library (computed view)
+# Index (computed view)
 
 <!-- Regenerated at wrap-up from frontmatter (scripts/ekp_index.py).
 Never edit by hand: if this file and a source file disagree, the

@@ -27,6 +27,14 @@ class IndexGeneration(unittest.TestCase):
             self.assertNotEqual(generated, on_disk)
             self.assertIn("| GAP-002 | What happens to same-day slots nobody takes? | resolved |", generated)
 
+    def test_index_does_not_depend_on_folder_name(self):
+        with tempfile.TemporaryDirectory() as td:
+            bundle = Path(td) / "a-differently-named-clone"
+            shutil.copytree(EXAMPLE, bundle)
+            generated = build_index(bundle, load_bundle(bundle))
+            on_disk = (bundle / "decisions" / "_index.md").read_text()
+            self.assertEqual(generated, on_disk)
+
 
 if __name__ == "__main__":
     unittest.main()
