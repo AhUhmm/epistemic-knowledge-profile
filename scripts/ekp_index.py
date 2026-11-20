@@ -16,6 +16,8 @@ Usage: python3 ekp_index.py BUNDLE_ROOT [--out PATH] [--check]
 import sys
 from pathlib import Path
 
+# Importing ekp_lint would leave scripts/__pycache__/ in the user's project.
+sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from ekp_lint import parse_frontmatter, first, CATEGORIES, EDGE_FIELDS, BARE_ID_RE
 
@@ -83,8 +85,9 @@ def build_index(root, files):
     for src, field, tgt in edges:
         backrefs.setdefault(tgt, {}).setdefault(BACKREF_VERB[field], []).append(src)
 
-    name = root.resolve().name.replace("-", " ")
-    out = [f"# Index — {name} (computed view)", "",
+    # The title must not depend on where the bundle sits on disk: a clone
+    # in a differently named folder would otherwise look stale.
+    out = ["# Index (computed view)", "",
            "<!-- Regenerated at wrap-up from frontmatter (scripts/ekp_index.py).",
            "Never edit by hand: if this file and a source file disagree, the",
            "source file wins (SPEC §5.4). -->", ""]
