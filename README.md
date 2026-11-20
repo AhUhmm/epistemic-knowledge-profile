@@ -49,9 +49,13 @@ access to the bundle?
 | [`scripts/ekp_usage.py`](scripts/ekp_usage.py) | Deterministic token accounting: appends one `usage` line per session to the log, from the session transcript. Runs as a Claude Code `SessionEnd` hook |
 | [`tests/`](tests/) | Contract tests for the scripts (`python3 -m unittest discover -s tests`): the example bundle must lint clean, a dirty fixture must trigger every finding class |
 | [`examples/neighbourhood-library/`](examples/neighbourhood-library/) | A small synthetic bundle at level L2: a library redesigns how its study rooms are booked |
+| [`docs/how-it-works.md`](docs/how-it-works.md) | How EKP works, for readers who don't write code: the kinds of note, how they connect, a working session, who checks what, the project settings |
 | [`CHANGELOG.md`](CHANGELOG.md) | Versions and what changed in each. One version number covers spec, templates, commands and scripts |
 
 ## The system at a glance
+
+New to EKP, or not technical? Start from [How EKP works](docs/how-it-works.md):
+the same system explained step by step, with an example.
 
 Five layers, each with an owner and a write discipline (SPEC §8.1). The
 epistemic layer is the only co-owned one: the agent proposes, the human

@@ -34,6 +34,11 @@ the exact commit, as long as it was installed from a tag or from `main`.
 
 ## [Unreleased]
 
+### Added
+- `docs/how-it-works.md`: EKP explained for non-technical readers, with
+  diagrams of the project layout, the links between notes (on the
+  example bundle), a working session, and who checks what.
+
 ## [0.3.0] - 2026-11-19
 
 ### Added
