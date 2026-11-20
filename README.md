@@ -57,32 +57,39 @@ access to the bundle?
 New to EKP, or not technical? Start from [How EKP works](docs/how-it-works.md):
 the same system explained step by step, with an example.
 
-Five layers, each with an owner and a write discipline (SPEC §8.1). The
-epistemic layer is the only co-owned one: the agent proposes, the human
-confirms — that confirmation step is **the gate**.
+Five layers, each with an owner and a write discipline (SPEC §8.1),
+plus an event log (§8.4). The epistemic layer is the only one written
+through **the gate**: the agent proposes, the human confirms. The gate is
+a working agreement written into the commands, not a technical lock.
 
 ```mermaid
 flowchart LR
-    subgraph H["owned by the human"]
-        SRC["sources/<br/>transcripts, briefs<br/><i>immutable</i>"]
+    subgraph H["human — immutable"]
+        SRC["sources/<br/>transcripts, briefs"]
+    end
+    subgraph D["human + agent — free structure"]
+        DOM["domain documents<br/>research, specs, deliverables"]
     end
     subgraph C["co-owned — written only through the gate"]
         EPI["epistemic layer<br/>concept/ + decisions/"]
     end
-    subgraph A["maintained by the agent, computed by scripts"]
+    subgraph V["agent — regenerated, never hand-edited"]
         IDX["_index.md<br/><i>computed view</i>"]
-        LOG["log.md<br/><i>append-only events</i>"]
     end
-    SCHEMA["schema<br/>ekp-config block in CLAUDE.md"]
+    SCHEMA["schema — co-evolved<br/>ekp-config block + templates"]
+    LOG["log.md<br/><i>append-only events</i>"]
     SRC -- "evidence (read-only)" --> EPI
-    EPI -- "ekp_index.py" --> IDX
-    EPI -- "events, lint runs, usage" --> LOG
-    SCHEMA -. "declares perimeter,<br/>modules, areas" .-> EPI
+    DOM -- "cited in bodies<br/>or via resource" --> EPI
+    EPI -- "agent runs ekp_index.py<br/>at wrap-up" --> IDX
+    EPI -- "agent appends events<br/>at wrap-up" --> LOG
+    SCHEMA -. "declares perimeter, modules,<br/>areas (read by the commands)" .-> EPI
 ```
 
 The two operations route through those layers. Scripts do the
-bookkeeping (lint floor, views, token accounting); the model does the
-judgment; nothing durable is written without a yes:
+bookkeeping (lint floor, views, token accounting) and the model does the
+judgment. The agent runs the scripts as steps of the commands, and writes
+to the epistemic layer only after a yes; only the optional usage hook
+runs without it:
 
 ```mermaid
 sequenceDiagram
@@ -90,16 +97,16 @@ sequenceDiagram
     participant M as agent
     participant B as bundle
     Note over M,B: /state — query
-    M->>B: read _index.md + log tail (never file bodies)
+    M->>B: read _index.md + log tail first, open files only as needed
     M->>U: where the reasoning stands
     Note over U,B: /wrap-up — lint + ingest
-    M->>B: ekp_lint.py — deterministic floor
+    M->>B: runs ekp_lint.py — deterministic checks
     M->>U: proposal: new items, transitions, edges
     U->>M: confirm / reject / amend (the gate)
     M->>B: write confirmed files
-    M->>B: ekp_index.py — regenerate views
+    M->>B: runs ekp_index.py — regenerate views
     M->>B: append events to log.md
-    Note over B: session end — ekp_usage.py hook<br/>appends one usage line, no model involved
+    Note over B: session end — optional Claude Code hook:<br/>ekp_usage.py appends token counts<br/>to the log, no model involved
 ```
 
 Relationships are three typed edges, always stored on the downstream

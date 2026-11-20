@@ -39,6 +39,13 @@ the exact commit, as long as it was installed from a tag or from `main`.
 
 ## [Unreleased]
 
+### Changed
+- README "system at a glance": the diagrams show the five layers of
+  SPEC §8.1 (domain documents were missing) plus the log, say who runs
+  the scripts and appends events (the agent, at wrap-up), that the gate
+  is a working agreement, that `/state` opens files only as needed, and
+  that the usage hook is optional, Claude Code only, and counts tokens.
+
 ## [0.3.1] - 2026-11-20
 
 Installation fixes from the first real install of 0.3.0 (#22, step 1),
