@@ -134,16 +134,16 @@ Read each arrow as "this note *built on / resolves / replaces* that
 note". The word in bold is the note's current state.
 
 ```mermaid
-flowchart RL
-    GAP1["GAP-001<br/>When do rooms run out?<br/><b>resolved</b>"]
-    ASS1["ASS-001<br/>Students book a day ahead<br/><b>invalidated</b>"]
-    CON1["CON-001<br/>Store only the card number<br/><b>active</b>"]
-    DEC1["DEC-001<br/>All rooms booked online<br/><b>superseded</b>"]
-    INS1["INS-001<br/>Two thirds are walk-ins<br/><b>active</b>"]
-    HYP1["HYP-001<br/>Same-day rooms help<br/><b>supported</b>"]
-    OPP1["OPP-001<br/>Screen at the entrance<br/><b>exploring</b>"]
-    DEC2["DEC-002<br/>Two rooms ahead, two on the day<br/><b>validated</b>"]
-    GAP2["GAP-002<br/>Unused same-day slots?<br/><b>open</b>"]
+flowchart BT
+    GAP1["GAP-001<br/>When do study rooms<br/>run out?<br/><b>resolved</b>"]
+    ASS1["ASS-001<br/>Students book rooms<br/>at least a day ahead<br/><b>invalidated</b>"]
+    CON1["CON-001<br/>Bookings store only<br/>the library card number<br/><b>active</b>"]
+    DEC1["DEC-001<br/>All rooms bookable online,<br/>up to seven days ahead<br/><b>superseded</b>"]
+    INS1["INS-001<br/>Two thirds of room<br/>requests are walk-ins<br/><b>active</b>"]
+    HYP1["HYP-001<br/>Holding back rooms for<br/>same-day use reduces<br/>turn-aways<br/><b>supported</b>"]
+    OPP1["OPP-001<br/>A screen at the entrance<br/>showing live room<br/>availability<br/><b>exploring</b>"]
+    DEC2["DEC-002<br/>Two rooms bookable ahead,<br/>two only on the day<br/><b>validated</b>"]
+    GAP2["GAP-002<br/>What happens to same-day<br/>slots nobody takes?<br/><b>open</b>"]
 
     DEC1 -- "built on" --> ASS1
     DEC1 -- "built on" --> CON1
@@ -156,6 +156,9 @@ flowchart RL
     DEC2 -- "replaces" --> DEC1
     GAP2 -- "built on" --> DEC2
 ```
+
+Older notes sit at the top and newer ones below, so the diagram reads
+from top to bottom in roughly the order things happened.
 
 Read it as a story. The library assumed students book ahead (ASS-001)
 and decided to put every room online (DEC-001). Front-desk records showed
@@ -211,21 +214,25 @@ current?) is done by small programs that give the same answer every
 time, whatever model is running.
 
 ```mermaid
-flowchart LR
+flowchart TB
+    CMDS["/state and /wrap-up<br/><i>commands you type</i>"]
+    HOOK["End of a session<br/><i>optional hook, Claude Code</i>"]
     subgraph J["Judgment"]
-        YOU2["You<br/>confirm at the gate"]
+        direction LR
         AG["The agent<br/>follows the commands"]
+        YOU2["You<br/>approve at the gate"]
     end
-    subgraph D["Bookkeeping: same answer every time"]
-        LINT["ekp_lint.py<br/>checks the notes"]
-        INDEX["ekp_index.py<br/>rebuilds the index"]
-        USAGE["ekp_usage.py<br/>records AI usage"]
+    subgraph D["Bookkeeping: same answer every time it runs"]
+        direction LR
+        LINT["The checker<br/>ekp_lint.py"]
+        INDEX["The index builder<br/>ekp_index.py"]
+        USAGE["The usage counter<br/>ekp_usage.py"]
     end
-    CMDS["/state and /wrap-up<br/><i>commands</i>"] --> AG
-    AG -- "runs" --> LINT
-    AG -- "runs" --> INDEX
-    HOOK["end of session<br/><i>hook</i>"] -- "runs, no agent involved" --> USAGE
+    CMDS --> AG
     AG -- "proposes" --> YOU2
+    AG -- "runs during /wrap-up" --> LINT
+    AG -- "runs during /wrap-up" --> INDEX
+    HOOK -- "runs on its own" --> USAGE
 ```
 
 - **A command** is a written procedure the agent follows when you type
