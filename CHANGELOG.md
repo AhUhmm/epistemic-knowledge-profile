@@ -34,10 +34,29 @@ the exact commit, as long as it was installed from a tag or from `main`.
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-20
+
+Installation fixes from the first real install of 0.3.0 (#22, step 1),
+and documentation. No change to the format.
+
 ### Added
 - `docs/how-it-works.md`: EKP explained for non-technical readers, with
   diagrams of the project layout, the links between notes (on the
   example bundle), a working session, and who checks what.
+- Install step 6: check the install (folders, lint, index,
+  `ekp_version`).
+
+### Changed
+- Install steps state the Python version (3.9 or later), put a
+  `.gitkeep` in every layer folder so git keeps them while empty, and say
+  exactly what to copy from `SCHEMA_template.md` and which placeholders
+  to replace.
+- The README warns about clashes with existing `scripts/` or
+  `templates/` folders, and explains how to merge the usage hook into
+  existing settings.
+
+### Fixed
+- `ekp_index.py` no longer leaves `scripts/__pycache__/` in the project.
 
 ## [0.3.0] - 2026-11-19
 
@@ -111,6 +130,7 @@ field audit of a real bundle (77 files, 200 edges) and by the LLM Wiki pattern (
 
 Initial draft of the specification. Not published in this repository.
 
-[Unreleased]: https://github.com/AhUhmm/epistemic-knowledge-profile/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/AhUhmm/epistemic-knowledge-profile/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/AhUhmm/epistemic-knowledge-profile/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/AhUhmm/epistemic-knowledge-profile/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/AhUhmm/epistemic-knowledge-profile/releases/tag/v0.2.0
