@@ -106,7 +106,7 @@ sequenceDiagram
     M->>B: write confirmed files
     M->>B: runs ekp_index.py — regenerate views
     M->>B: append events to log.md
-    Note over B: session end — optional Claude Code hook:<br/>ekp_usage.py appends token counts to the log,<br/>no model involved
+    Note over B: session end — optional Claude Code hook:<br/>ekp_usage.py appends token counts<br/>to the log, no model involved
 ```
 
 Relationships are three typed edges, always stored on the downstream
