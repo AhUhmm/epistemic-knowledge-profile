@@ -51,12 +51,18 @@ and documentation. No change to the format.
   `.gitkeep` in every layer folder so git keeps them while empty, and say
   exactly what to copy from `SCHEMA_template.md` and which placeholders
   to replace.
-- The README warns about clashes with existing `scripts/` or
-  `templates/` folders, and explains how to merge the usage hook into
-  existing settings.
+- The install commands set the two folder paths once and `cd`
+  explicitly, so the block works when pasted, even with spaces in paths.
+- The README warns about file clashes before the copy step, and explains
+  how to merge the usage hook into existing settings, including an
+  existing `SessionEnd` entry.
 
 ### Fixed
 - `ekp_index.py` no longer leaves `scripts/__pycache__/` in the project.
+- The index title no longer contains the bundle folder's name, so a
+  clone in a differently named folder no longer fails `--check`.
+  **After upgrading, regenerate the index once** (`python3
+  scripts/ekp_index.py .`): its title line changes.
 
 ## [0.3.0] - 2026-11-19
 
