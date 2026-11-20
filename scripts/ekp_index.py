@@ -16,6 +16,8 @@ Usage: python3 ekp_index.py BUNDLE_ROOT [--out PATH] [--check]
 import sys
 from pathlib import Path
 
+# Importing ekp_lint would leave scripts/__pycache__/ in the user's project.
+sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from ekp_lint import parse_frontmatter, first, CATEGORIES, EDGE_FIELDS, BARE_ID_RE
 
