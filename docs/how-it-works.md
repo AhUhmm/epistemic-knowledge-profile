@@ -41,24 +41,26 @@ owner, and the owner decides who may write there.
 flowchart TB
     subgraph YOU["Yours"]
         SRC["Your sources<br/>interviews, briefs, data<br/><i>never changed by the agent</i>"]
-        CFG["Project settings<br/>a short block in CLAUDE.md"]
+    end
+    subgraph WORK["Developed together"]
+        DOCS["Working documents<br/>research summaries,<br/>designs, deliverables"]
     end
     subgraph SHARED["Shared: written only after you say yes"]
         NOTES["The notes<br/>concept/ and decisions/"]
     end
-    subgraph AUTO["Kept up to date automatically"]
-        IDX["The index<br/>a summary of every note"]
-        LOG["The log<br/>a diary of what changed"]
-    end
-    subgraph KIT["The EKP kit, copied at install"]
+    subgraph SCHEMA["Maintained together, changed deliberately"]
+        CFG["Project settings<br/>a short block in CLAUDE.md"]
         TPL["templates/<br/>one blank form per kind"]
-        SCR["scripts/<br/>checks and summaries"]
-        CMD["commands<br/>/state and /wrap-up"]
+    end
+    subgraph AUTO["Updated by the agent during /wrap-up"]
+        IDX["The index<br/>a summary of every note"]
+        LOG["The log<br/>a diary of events"]
     end
     SRC -- "evidence" --> NOTES
+    DOCS -- "cited as evidence or output" --> NOTES
     TPL -- "new notes start from these" --> NOTES
     NOTES -- "summarised into" --> IDX
-    NOTES -- "every change recorded in" --> LOG
+    NOTES -- "creations and state changes<br/>recorded in" --> LOG
     CFG -. "tells the agent where things are" .-> NOTES
 ```
 
@@ -68,8 +70,15 @@ flowchart TB
   see where things stand. A script rebuilds it; nobody edits it by hand.
 - **The log** is a diary: one line for every note created and every
   change of state, with the date. Lines are only ever added.
+- **Working documents** are the everyday work: research summaries,
+  designs, deliverables. You and the agent develop them together, and
+  notes can cite them as evidence or as the output of a decision. Raw
+  sources, by contrast, stay unchanged.
+- **The settings and the templates** shape the whole project, so they
+  are maintained together and changed deliberately, with the change
+  written down.
 - **The kit** is what you copy from this repository when you install
-  EKP: blank forms, scripts and two commands.
+  EKP: the templates, a few scripts and two commands.
 
 ## How notes connect
 
@@ -79,10 +88,11 @@ Notes point to each other in only three ways:
 - **resolves**: this decision answers that gap;
 - **replaces**: this note takes the place of that one.
 
-The link is always written in the newer note, pointing back at the older
-one. The older note never has to be edited when something new builds on
-it. The index works out the reverse reading for you ("what was built on
-this?").
+Each link is written in the note that builds on, answers or replaces
+the other one, never in both. The other note doesn't have to be edited:
+the index works out the reverse reading for you ("what was built on
+this?"). Links can be added between notes that already exist, and they
+don't have to follow a fixed sequence.
 
 Here is the example in [`examples/neighbourhood-library`](../examples/neighbourhood-library/),
 a library deciding how its study rooms are booked:
@@ -142,8 +152,10 @@ sequenceDiagram
     Agent->>Notes: rebuilds the index, adds lines to the log
 ```
 
-The most important step is **the gate**. The agent never adds or changes
-a note on its own: it proposes, you decide. A note is a commitment ("we
+The most important step is **the gate**. EKP instructs the agent to ask
+before adding or changing a note: it proposes, you decide. The gate is a
+working agreement written into the commands, not a lock: it holds
+because the agent follows the procedure and you check what it proposes. A note is a commitment ("we
 believe this", "we chose this"), and commitments need a person behind
 them.
 
@@ -164,7 +176,7 @@ flowchart LR
     subgraph D["Bookkeeping: same answer every time"]
         LINT["ekp_lint.py<br/>checks the notes"]
         INDEX["ekp_index.py<br/>rebuilds the index"]
-        USAGE["ekp_usage.py<br/>records session cost"]
+        USAGE["ekp_usage.py<br/>records AI usage"]
     end
     CMDS["/state and /wrap-up<br/><i>commands</i>"] --> AG
     AG -- "runs" --> LINT
@@ -182,12 +194,18 @@ flowchart LR
   checker, the index builder and the usage counter.
 - **A hook** is a rule in your AI tool's settings: "when this happens,
   run that". It fires on its own, without the agent deciding. EKP
-  currently offers one, optional: at the end of each session, add a line
-  to the log with what the session cost. A second one is planned
-  ([#20](https://github.com/AhUhmm/epistemic-knowledge-profile/issues/20)): check every note right after it's written.
+  currently offers one, optional, for Claude Code: when a session ends,
+  it adds a line to the log with the session's token counts (tokens are
+  the units AI tools use to measure what they read and write). It
+  doesn't calculate a price. A second hook is proposed
+  ([#20](https://github.com/AhUhmm/epistemic-knowledge-profile/issues/20)):
+  check every note right after it's written.
 
-The split matters because an agent can be wrong, or skip a step. The
-scripts are the floor that holds anyway.
+The split matters because an agent can be wrong. The scripts give the
+same answer every time they run, but today it's the agent that runs the
+checker and the index builder, during `/wrap-up`. If it skips those
+steps, the checks don't happen. Only the optional usage hook runs on its
+own.
 
 ## Project settings
 
@@ -198,13 +216,13 @@ Each project has a short settings block in its instruction file
 
 | Setting | What it says | Who reads it today | Safe to change? |
 |---------|--------------|--------------------|-----------------|
-| `ekp_version` | Which EKP release the project was installed from | People, when upgrading | Yes: update it when you upgrade |
+| `ekp_version` | Which EKP release the project was installed from | People and agents, when upgrading; no script | Yes: update it when you upgrade |
 | `perimeter` | Which folders hold the notes | The agent only | **No**: the scripts look in `concept/` and `decisions/` regardless ([#19](https://github.com/AhUhmm/epistemic-knowledge-profile/issues/19)) |
 | `modules` | Optional extras that are switched on | The agent | Yes |
 | `areas` | The topics you group notes by, e.g. strategy, research | The agent | Yes: add new ones freely |
 | `extensions` | Extra fields your project adds, and the rule that uses each | The agent | Yes, as long as each has a rule |
 | `log` | Where the log file is | The agent and the usage counter | **No**: the checker still reads `log.md` |
-| `index` | Where the index file is | The agent | **No**: the scripts use `decisions/_index.md` |
+| `index` | Where the index file is | The agent | **No**: the checker assumes `decisions/_index.md`, and the index builder uses it unless told otherwise |
 
 Until [#19](https://github.com/AhUhmm/epistemic-knowledge-profile/issues/19) is solved, keep the folder and file
 locations as they are, and change the rest freely.
@@ -217,5 +235,6 @@ locations as they are, and change the rest freely.
 - **Link** (in the specification: *edge*): built on, resolves, replaces.
 - **State** (in the specification: *status*): where a note is in its
   life, e.g. open or validated.
-- **The gate**: the moment you confirm what the agent proposes. Nothing
-  is written without it.
+- **The gate**: your explicit approval of the notes the agent proposes,
+  before it writes them. The optional usage line in the log is added
+  separately, without asking.
