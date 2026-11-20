@@ -116,12 +116,19 @@ flowchart LR
 
 ## Try it
 
+You need Python 3.9 or later (standard library only, nothing to
+install) and a copy of this repository: clone it, or download a release.
+Install from a release tag or from `main`: a commit on another branch may
+later disappear.
+
 ```bash
 # 1. in the EKP repo: look at the example and lint it
 python3 scripts/ekp_lint.py examples/neighbourhood-library
 
-# 2. in your project, from here on: create the two folders of the epistemic layer
+# 2. in your project, from here on: create the folders of the epistemic
+#    layer, with a .gitkeep in each so git keeps them while they're empty
 mkdir -p concept/{gaps,assumptions,opportunities,hypotheses,constraints,insights} decisions
+for d in concept/*/ decisions/; do touch "$d.gitkeep"; done
 
 # 3. copy the scripts and the templates, and the commands if you use Claude Code
 mkdir -p scripts templates .claude/commands
@@ -135,15 +142,42 @@ python3 scripts/ekp_index.py .
 ```
 
 `/wrap-up` writes new items from `templates/`, so the folder has to be in
-the project, not only in this repo. Then paste the block in
-`templates/SCHEMA_template.md` into your project's instruction file
-(`CLAUDE.md`, `AGENTS.md` or equivalent), set its `ekp_version` to the
-output of `git -C path/to/ekp describe --tags --always`, and start from
-the templates. If your copy of EKP isn't a git clone (a ZIP download),
-write the release tag you downloaded instead. Install from a release tag
-or from `main`: a commit on another branch may later disappear.
-Bundles installed at different times drift apart silently; the recorded
-version says which [CHANGELOG](CHANGELOG.md) entries apply.
+the project, not only in this repo. If your project already has a
+`scripts/` or `templates/` folder, check before copying: EKP's files are
+`ekp_*.py` and `*_template.md`, and `cp` overwrites files with the same
+name.
+
+**5. Add the configuration to your instruction file.** Open
+`templates/SCHEMA_template.md` and copy all of it, from the
+`# EKP configuration` heading to the end, into your project's instruction
+file: `CLAUDE.md` for Claude Code, `AGENTS.md` or equivalent for other
+tools. If the file doesn't exist, create it; if it does, add the text at
+the end. Then replace the three placeholders:
+
+- `[PROJECT_NAME]` in the heading: your project's name;
+- `vX.Y.Z` after `ekp_version:`: the output of
+  `git -C path/to/ekp describe --tags --always`, or the release tag you
+  downloaded if your copy isn't a git clone;
+- the last bullet, `[Project-specific conventions: …]`: your own
+  conventions (language, naming, where the domain documents are), or
+  delete it.
+
+Keep the fenced `yaml` block that starts with `# ekp-config` as the first
+`yaml` block after the heading: the commands look for it there. Bundles
+installed at different times drift apart silently; the recorded version
+says which [CHANGELOG](CHANGELOG.md) entries apply.
+
+**6. Check the install.** From the project folder:
+
+```bash
+ls concept                               # the six category folders
+python3 scripts/ekp_lint.py .            # Errors: 0 (0 files is right for a new bundle)
+python3 scripts/ekp_index.py . --check   # ok: decisions/_index.md is up to date
+grep -n "ekp_version" CLAUDE.md          # a real version, not vX.Y.Z
+```
+
+The linter can't tell an empty bundle from missing folders yet
+([#19](../../issues/19)), which is why the first line checks the folders.
 
 You don't need the whole thing on day one: level L0 costs one `type:`
 field per file, L1 adds `id` and `status`, L2 adds the links.
@@ -151,14 +185,19 @@ field per file, L1 adds `id` and `status`, L2 adds the links.
 The linter exits with 0 when the bundle is clean, 1 with warnings only,
 2 with errors. Add `--json` for machine-readable output.
 
-To also record what each session costs, add the usage hook to the
-project's `.claude/settings.json` — it appends one line per session to
-`log.md`, computed from the transcript, no model involved:
+To also record what each session uses, add the usage hook to the
+project's `.claude/settings.json` (Claude Code only). It appends a line
+with the session's token counts to the existing `log.md`, computed from
+the transcript, no model involved:
 
 ```json
 {"hooks": {"SessionEnd": [{"hooks": [
     {"type": "command", "command": "python3 scripts/ekp_usage.py"}]}]}}
 ```
+
+If the file already has a `"hooks"` object, add only the `"SessionEnd"`
+entry to it. The command path is relative: it works when Claude Code
+runs from the project folder.
 
 ### Without the system
 
