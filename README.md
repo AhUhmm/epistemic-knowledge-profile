@@ -117,24 +117,41 @@ flowchart LR
 ## Try it
 
 You need Python 3.9 or later (standard library only, nothing to
-install) and a copy of this repository: clone it, or download a release.
-Install from a release tag or from `main`: a commit on another branch may
-later disappear.
+install), a Bash or zsh shell, and a copy of this repository: clone it,
+or download a release. Install from a release tag or from `main`: a
+commit on another branch may later disappear.
+
+The commands below use two folders: your copy of EKP and your project.
+Set their paths first, replacing the examples with your own:
 
 ```bash
-# 1. in the EKP repo: look at the example and lint it
+ekp_source="/absolute/path/to/epistemic-knowledge-profile"
+project_dir="/absolute/path/to/your-project"
+
+# 1. look at the example and lint it
+cd "$ekp_source"
 python3 scripts/ekp_lint.py examples/neighbourhood-library
 
-# 2. in your project, from here on: create the folders of the epistemic
-#    layer, with a .gitkeep in each so git keeps them while they're empty
+# 2. in your project: create the folders of the epistemic layer, with a
+#    .gitkeep in each so git keeps them while they're empty
+cd "$project_dir"
 mkdir -p concept/{gaps,assumptions,opportunities,hypotheses,constraints,insights} decisions
 for d in concept/*/ decisions/; do touch "$d.gitkeep"; done
+```
 
+**Before step 3, check for clashes.** Step 3 copies files into
+`scripts/`, `templates/` and `.claude/commands/`, and `cp` overwrites any
+file with the same name without asking. EKP's files are `ekp_*.py`,
+`*_template.md`, `state.md` and `wrap-up.md`. If your project already has
+files with those names in those folders, stop and rename yours first.
+Other files in the folders are left alone.
+
+```bash
 # 3. copy the scripts and the templates, and the commands if you use Claude Code
 mkdir -p scripts templates .claude/commands
-cp path/to/ekp/scripts/*.py scripts/
-cp path/to/ekp/templates/*.md templates/
-cp path/to/ekp/commands/*.md .claude/commands/
+cp "$ekp_source"/scripts/*.py scripts/
+cp "$ekp_source"/templates/*.md templates/
+cp "$ekp_source"/commands/*.md .claude/commands/
 
 # 4. create the log and the first (empty) index, which /state reads
 touch log.md
@@ -142,10 +159,7 @@ python3 scripts/ekp_index.py .
 ```
 
 `/wrap-up` writes new items from `templates/`, so the folder has to be in
-the project, not only in this repo. If your project already has a
-`scripts/` or `templates/` folder, check before copying: EKP's files are
-`ekp_*.py` and `*_template.md`, and `cp` overwrites files with the same
-name.
+the project, not only in the EKP repository.
 
 **5. Add the configuration to your instruction file.** Open
 `templates/SCHEMA_template.md` and copy all of it, from the
@@ -156,7 +170,7 @@ the end. Then replace the three placeholders:
 
 - `[PROJECT_NAME]` in the heading: your project's name;
 - `vX.Y.Z` after `ekp_version:`: the output of
-  `git -C path/to/ekp describe --tags --always`, or the release tag you
+  `git -C "$ekp_source" describe --tags --always`, or the release tag you
   downloaded if your copy isn't a git clone;
 - the last bullet, `[Project-specific conventions: …]`: your own
   conventions (language, naming, where the domain documents are), or
@@ -170,14 +184,17 @@ says which [CHANGELOG](CHANGELOG.md) entries apply.
 **6. Check the install.** From the project folder:
 
 ```bash
-ls concept                               # the six category folders
+ls concept                               # look: all six category folders
 python3 scripts/ekp_lint.py .            # Errors: 0 (0 files is right for a new bundle)
 python3 scripts/ekp_index.py . --check   # ok: decisions/_index.md is up to date
-grep -n "ekp_version" CLAUDE.md          # a real version, not vX.Y.Z
+grep -n "^ekp_version:" CLAUDE.md        # look: a real version, not vX.Y.Z
+                                         # (use AGENTS.md if you chose it in step 5)
 ```
 
-The linter can't tell an empty bundle from missing folders yet
-([#19](../../issues/19)), which is why the first line checks the folders.
+Two of these checks are by eye: a clean exit doesn't prove that all six
+folders are there, or that the version was filled in. Read the output of
+the first and the last line. The linter can't tell an empty bundle from
+missing folders yet ([#19](../../issues/19)).
 
 You don't need the whole thing on day one: level L0 costs one `type:`
 field per file, L1 adds `id` and `status`, L2 adds the links.
@@ -195,9 +212,17 @@ the transcript, no model involved:
     {"type": "command", "command": "python3 scripts/ekp_usage.py"}]}]}}
 ```
 
-If the file already has a `"hooks"` object, add only the `"SessionEnd"`
-entry to it. The command path is relative: it works when Claude Code
-runs from the project folder.
+If the file already exists, merge this into it and keep everything else:
+
+- no `"hooks"` key yet: add the whole `"hooks"` object;
+- `"hooks"` but no `"SessionEnd"`: add the `"SessionEnd"` array;
+- `"SessionEnd"` already there: append the inner object
+  (`{"hooks": [{"type": "command", "command": "python3 scripts/ekp_usage.py"}]}`)
+  to its array. Don't add a second `"SessionEnd"` key and don't replace
+  the existing entries.
+
+The command path is relative: it works when Claude Code runs from the
+project folder.
 
 ### Without the system
 
