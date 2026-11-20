@@ -1,6 +1,8 @@
 # How EKP works
 
-This page explains EKP without assuming you write code. It covers what
+EKP (Epistemic Knowledge Profile) is a way to record what a project
+knows, assumes, questions and decides. This page explains it without
+assuming you write code. It covers what
 the files are, how they connect, what happens during a working session,
 and which parts are checked automatically. The precise rules are in the
 [specification](../SPEC.md); this page is the way in.
@@ -29,13 +31,42 @@ question, and each has a small set of states it can be in.
 | **Constraint** | What limits must every solution respect? | active → removed |
 | **Decision** | What did we choose, and why? | open → validated or invalidated |
 
-Any note can also end up **superseded**: replaced by a newer one, but
-kept, so the old reasoning stays readable.
+These are example states, not all of them. A few words on what they
+mean: *supported* means the evidence backs a hypothesis so far, not that
+it is settled for good; an assumption *validated* by evidence is still
+labelled an assumption, while an insight starts from evidence. Any note
+can also end up **superseded**: replaced by a newer one, but kept, so the
+old reasoning stays readable.
+
+## What a note looks like
+
+A note is a short text file. It has two parts:
+
+- **A header** at the top, a few labelled lines: the kind of note, its
+  reference number, a title, its current state and its links to other
+  notes. Being labelled, these lines can be read by people and by
+  programs.
+- **The body**: ordinary prose. The idea or the choice, the evidence or
+  reasoning behind it, and what would make you look at it again.
+
+That last part matters most. Every note says when it should be
+reconsidered. For example, the decision
+[DEC-002](../examples/neighbourhood-library/decisions/DEC-002_split-booking.md)
+in the example below says: if the same-day rooms stay empty more than
+40% of opening hours for two months, reconsider the split. A decision
+that was sound can become one to revisit, and the note says in advance
+what would show it.
 
 ## What's in a project
 
 A project that uses EKP has a few extra folders and files. Each has an
 owner, and the owner decides who may write there.
+
+A note on notation, used from here on: names ending in `/` are folders;
+names ending in `.md` are readable text files. `CLAUDE.md` is the file
+with the project's instructions for the AI assistant. `/state` and
+`/wrap-up` look similar to folder names but are not: they are requests
+you type to the assistant.
 
 ```mermaid
 flowchart TB
@@ -94,8 +125,13 @@ the index works out the reverse reading for you ("what was built on
 this?"). Links can be added between notes that already exist, and they
 don't have to follow a fixed sequence.
 
-Here is the example in [`examples/neighbourhood-library`](../examples/neighbourhood-library/),
-a library deciding how its study rooms are booked:
+Here is the fictional example in
+[`examples/neighbourhood-library`](../examples/neighbourhood-library/):
+a library deciding how its study rooms are booked. Each note has a
+reference number: the letters name its kind (GAP, ASS for assumption,
+CON for constraint, DEC, INS, HYP, OPP) and the number identifies it.
+Read each arrow as "this note *built on / resolves / replaces* that
+note". The word in bold is the note's current state.
 
 ```mermaid
 flowchart RL
@@ -128,12 +164,20 @@ wrong. A pilot supported keeping some rooms for the same day (HYP-001),
 and a new decision replaced the first one (DEC-002). That decision
 answered the original question (GAP-001) and raised a new one (GAP-002).
 DEC-001 is still there, marked superseded: anyone can see what was tried
-and why it changed.
+and why it changed. Two notes run alongside the story: the privacy
+constraint (CON-001) applies to both decisions, and the entrance screen
+(OPP-001) is still only an opportunity being explored.
 
 ## A working session
 
-You work with an AI agent as usual. EKP adds two moments: one at the
-start and one at the end.
+This way of working needs an AI assistant that can read and write
+files in your project (an *agent*), not only chat. Once EKP is set up,
+you type `/state` in the conversation with the assistant to get a
+briefing, you work together as usual, and you type `/wrap-up` to review
+what should be saved. The commands supplied with EKP are written for
+Claude Code; other tools need an equivalent setup.
+([Setup instructions](../README.md#try-it): you may want help with this
+part.)
 
 ```mermaid
 sequenceDiagram
@@ -155,9 +199,8 @@ sequenceDiagram
 The most important step is **the gate**. EKP instructs the agent to ask
 before adding or changing a note: it proposes, you decide. The gate is a
 working agreement written into the commands, not a lock: it holds
-because the agent follows the procedure and you check what it proposes. A note is a commitment ("we
-believe this", "we chose this"), and commitments need a person behind
-them.
+because the agent follows the procedure and you check what it proposes. These notes record what you believe, what is still uncertain and
+what you have chosen. You decide how that shared record changes.
 
 ## Commands, scripts and hooks: who does what
 
@@ -218,14 +261,17 @@ Each project has a short settings block in its instruction file
 |---------|--------------|--------------------|-----------------|
 | `ekp_version` | Which EKP release the project was installed from | People and agents, when upgrading; no script | Yes: update it when you upgrade |
 | `perimeter` | Which folders hold the notes | The agent only | **No**: the scripts look in `concept/` and `decisions/` regardless ([#19](https://github.com/AhUhmm/epistemic-knowledge-profile/issues/19)) |
-| `modules` | Optional extras that are switched on | The agent | Yes |
+| `modules` | Optional procedures, such as a handover note for the next session (`continuity`) or links to your issue tracker (`integrations`) | The agent | Yes, once the procedure is set up for your project |
 | `areas` | The topics you group notes by, e.g. strategy, research | The agent | Yes: add new ones freely |
-| `extensions` | Extra fields your project adds, and the rule that uses each | The agent | Yes, as long as each has a rule |
+| `extensions` | Extra fields your project adds to notes, each with the rule that uses it. For example, a `risk` field is worth adding only if high-risk notes are treated differently | The agent | Yes, as long as each has a rule |
 | `log` | Where the log file is | The agent and the usage counter | **No**: the checker still reads `log.md` |
 | `index` | Where the index file is | The agent | **No**: the checker assumes `decisions/_index.md`, and the index builder uses it unless told otherwise |
 
-Until [#19](https://github.com/AhUhmm/epistemic-knowledge-profile/issues/19) is solved, keep the folder and file
-locations as they are, and change the rest freely.
+Until [#19](https://github.com/AhUhmm/epistemic-knowledge-profile/issues/19)
+is solved, keep the folder and file locations as they are. Add topic
+names whenever you need them; switch on procedures and extra fields
+deliberately. Update `ekp_version` only after the upgrade is done,
+including any changes the [changelog](../CHANGELOG.md) asks for.
 
 ## Words used on this page
 
