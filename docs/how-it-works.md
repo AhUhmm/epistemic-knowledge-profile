@@ -49,8 +49,9 @@ A note is a short text file. It has two parts:
 - **The body**: ordinary prose. The idea or the choice, the evidence or
   reasoning behind it, and what would make you look at it again.
 
-That last part matters most. Every note says when it should be
-reconsidered. For example, the decision
+That last part matters most. Notes can record what would make you
+reconsider them, and decisions always do, in a section called *review
+triggers*. For example, the decision
 [DEC-002](../examples/neighbourhood-library/decisions/DEC-002_split-booking.md)
 in the example below says: if the same-day rooms stay empty more than
 40% of opening hours for two months, reconsider the split. A decision
@@ -216,24 +217,28 @@ time, whatever model is running.
 ```mermaid
 flowchart TB
     CMDS["/state and /wrap-up<br/><i>commands you type</i>"]
-    HOOK["End of a session<br/><i>optional hook, Claude Code</i>"]
     subgraph J["Judgment"]
         direction LR
         AG["The agent<br/>follows the commands"]
         YOU2["You<br/>approve at the gate"]
     end
-    subgraph D["Bookkeeping: same answer every time it runs"]
+    subgraph RUN["Run by the agent during /wrap-up"]
         direction LR
         LINT["The checker<br/>ekp_lint.py"]
         INDEX["The index builder<br/>ekp_index.py"]
+    end
+    HOOK["End of a session<br/><i>optional hook, Claude Code</i>"]
+    subgraph OWN["Runs on its own"]
         USAGE["The usage counter<br/>ekp_usage.py"]
     end
     CMDS --> AG
     AG -- "proposes" --> YOU2
-    AG -- "runs during /wrap-up" --> LINT
-    AG -- "runs during /wrap-up" --> INDEX
-    HOOK -- "runs on its own" --> USAGE
+    AG -- "runs" --> RUN
+    HOOK -- "triggers" --> USAGE
 ```
+
+The three programs at the bottom do bookkeeping: given the same files,
+they give the same answer every time they run.
 
 - **A command** is a written procedure the agent follows when you type
   it, like `/wrap-up`. It's a recipe: the agent reads it and does the
@@ -244,8 +249,9 @@ flowchart TB
   checker, the index builder and the usage counter.
 - **A hook** is a rule in your AI tool's settings: "when this happens,
   run that". It fires on its own, without the agent deciding. EKP
-  currently offers one, optional, for Claude Code: when a session ends,
-  it adds a line to the log with the session's token counts (tokens are
+  currently offers one, optional, for Claude Code: once you add it to
+  the tool's settings, it adds a line to the existing log when a session
+  ends, with the session's token counts (tokens are
   the units AI tools use to measure what they read and write). It
   doesn't calculate a price. A second hook is proposed
   ([#20](https://github.com/AhUhmm/epistemic-knowledge-profile/issues/20)):
